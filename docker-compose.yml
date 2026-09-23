@@ -11,7 +11,7 @@ services:
       - .env
 
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/sales_agent
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/sales-agent
 
     volumes:
       - ./app:/app/app
@@ -31,7 +31,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sales-agent
+      POSTGRES_DB: sales_agent
 
     ports:
       - "5432:5432"
@@ -41,7 +41,7 @@ services:
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
 
     healthcheck:
-      test: ["CMD-SHELL", "pg-isready -U postgres -d sales_agent"]
+      test: ["CMD-SHELL", "/usr/bin/pg_isready -U postgres -d sales-agent"]
       interval: 5s
       timeout: 5s
       retries: 10
