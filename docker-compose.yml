@@ -1,0 +1,50 @@
+services:
+
+  sales-agent:
+    build: .
+    container_name: sales-agent-api
+
+    ports:
+      - "8002:8000"
+
+    env_file:
+      - .env
+
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/sales_agent
+
+    volumes:
+      - ./app:/app/app
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    command: >
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: sales-agent-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sales-agent
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - sales-agent-db-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg-isready -U postgres -d sales_agent"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  sales-agent-db-data:
