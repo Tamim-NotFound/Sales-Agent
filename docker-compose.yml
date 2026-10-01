@@ -11,8 +11,8 @@ services:
       - .env
 
 
-    volumes:
-      - ./app:/app/app
+    # volumes:
+      # - ./app:/app/app
 
     depends_on:
       db:
@@ -39,7 +39,7 @@ services:
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
 
     healthcheck:
-      test: ["CMD-SHELL", "/usr/bin/pg_isready -U postgres -d sales-agent"]
+      test: ["CMD-SHELL", "/usr/bin/pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10

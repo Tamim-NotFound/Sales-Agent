@@ -1,7 +1,25 @@
 from fastapi import FastAPI, Depends
 from app.core.config import Settings, get_settings
+from sqlalchemy import text
+from app.db.session import SessionDep
 app = FastAPI(title=get_settings().APP_NAME)
 
 @app.get("/health")
 async def health(settings: Settings = Depends(get_settings)) -> dict[str, str]:
     return {"status": "ok", "app": settings.APP_NAME}
+
+
+@app.get("/health/db")
+async def health_db(session: SessionDep) -> dict[str, str]:
+    result = await session.execute(text("SELECT version();"))
+    version = result.scalar_one()
+    ext = await session.execute(
+        text("SELECT extname FROM pg_extension WHERE extname = 'vector';")
+    )
+    has_vector = ext.scalar_one_or_none() is not None
+
+    return {
+        "database": "connected",
+        "version": version.split(",")[0],
+        "pgvector": "installed" if has_vector else "missing",
+    }
