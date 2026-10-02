@@ -1,6 +1,6 @@
 services:
 
-  sales-agent:
+  backend:
     build: .
     container_name: sales-agent-api
 
