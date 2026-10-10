@@ -30,6 +30,8 @@ PYTHONDONTWRITEBYTECODE=1
 
 # Now copy the application code
 COPY --chown=app:app app/ ./app/
+COPY --chown=app:app alembic.ini ./
+COPY --chown=app:app alembic/ ./alembic/
 
 USER app
 EXPOSE 8000
