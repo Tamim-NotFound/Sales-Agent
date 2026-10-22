@@ -37,7 +37,7 @@ class Product(Base, TimeStampMixin):
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default="true"
     )
-    warrenty_months: Mapped[int] = mapped_column(
+    warranty_months: Mapped[int] = mapped_column(
         Integer, default=12, server_default="12"
     )
     category: Mapped[Category] = mapped_column(
