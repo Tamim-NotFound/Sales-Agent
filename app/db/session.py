@@ -1,5 +1,5 @@
 from collections.abc import AsyncIterator
-from typing import Annotated
+from typing import Annotated, TypeAlias
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
@@ -38,6 +38,6 @@ async def get_session() -> AsyncIterator[AsyncSession]:
             raise
 
 
-SessionDep = Annotated[AsyncSession, Depends(get_session, scope="function")]
+SessionDep: TypeAlias = Annotated[AsyncSession, Depends(dependency=get_session, scope="function")]
 
-StreamingSessionDep = Annotated[AsyncSession, Depends(get_session)]
+StreamingSessionDep: TypeAlias  = Annotated[AsyncSession, Depends(dependency=get_session)]
