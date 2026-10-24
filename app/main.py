@@ -4,10 +4,13 @@ from sqlalchemy import text
 from app.core.config import Settings, get_settings
 from app.db.session import SessionDep
 from app.core.exceptions.handlers import register_exception_handlers
+from app.api.v1.router import api_router
+
 
 
 app = FastAPI(title=get_settings().APP_NAME)
 register_exception_handlers(app)
+app.include_router(router=api_router)
 
 @app.get("/health")
 async def health(settings: Settings = Depends(get_settings)) -> dict[str, str]:
