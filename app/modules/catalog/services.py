@@ -21,7 +21,7 @@ class ProductService:
         self.repo = repo
 
     async def create_product(self, data: ProductCreate) -> ProductRead:
-        if await self.repo.exists_by_slug(data.slug):
+        if await self.repo.slug_exists(data.slug):
             raise ConflictError("Product", data.slug)
         product = await self.repo.add(Product(**data.model_dump()))
         return to_read(product)
@@ -51,7 +51,13 @@ class ProductService:
         product = await self.repo.get_by_slug(slug)
         if product is None:
             raise NotFoundError("Product", slug)
-        for field, value in data.model_dump(exclude_unset=True).items():
+        
+        update_data = data.model_dump(exclude_unset=True)
+        if "slug" in update_data and update_data["slug"] != slug:
+            if await self.repo.slug_exists(update_data["slug"]):
+                raise ConflictError("Product", update_data["slug"])
+
+        for field, value in update_data.items():
             setattr(product, field, value)
         await self.repo.save(product)
         return to_read(product)
@@ -61,3 +67,4 @@ class ProductService:
         if product is None:
             raise NotFoundError("Product", slug)
         product.is_active = False
+        await self.repo.save(product)

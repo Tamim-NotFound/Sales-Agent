@@ -34,10 +34,7 @@ async def create_product(
 
 
 @router.patch("/{slug}", response_model=ProductRead)
-async def update_product(
-    slug: str, data: ProductUpdate, service: ProductServiceDep
-) -> ProductRead:
-    return await service.update_product(slug, data)
+async def update_product(slug: str, data: ProductUpdate, service: ProductServiceDep) -> ProductRead:return await service.update_product(slug, data)
 
 
 @router.delete("/{slug}", status_code=status.HTTP_204_NO_CONTENT)
