@@ -38,5 +38,16 @@ services:
       timeout: 5s
       retries: 10
 
+  embedder:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9.4
+    container_name: sales-agent-embedder
+    restart: unless-stopped
+    command: --model-id BAAI/bge-base-en-v1.5
+    ports:
+      - "8090:80"
+    volumes:
+      - sales-agent-hf-cache:/data
+
 volumes:
   sales-agent-db-data:
+  sales-agent-hf-cache:
