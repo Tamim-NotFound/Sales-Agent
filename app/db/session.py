@@ -1,5 +1,5 @@
 from collections.abc import AsyncIterator
-from typing import Annotated, TypeAlias
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
@@ -14,11 +14,11 @@ settings = get_settings()
 
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=settings.DEBUG,  # log SQL queries
+    echo=settings.DEBUG,
     pool_size=5,
     max_overflow=10,
-    pool_pre_ping=True,  # ping the database to check if it's still alive
-    connect_args={"server_settings": {"search_path": settings.DB_SCHEMA}},
+    pool_pre_ping=True,
+    connect_args={"server_settings": {"search_path": f"{settings.DB_SCHEMA},public"}},
 )
 
 SessionLocal = async_sessionmaker(
@@ -38,6 +38,6 @@ async def get_session() -> AsyncIterator[AsyncSession]:
             raise
 
 
-SessionDep: TypeAlias = Annotated[AsyncSession, Depends(dependency=get_session, scope="function")]
+SessionDep = Annotated[AsyncSession, Depends(get_session, scope="function")]
 
-StreamingSessionDep: TypeAlias  = Annotated[AsyncSession, Depends(dependency=get_session)]
+StreamingSessionDep = Annotated[AsyncSession, Depends(get_session)]
