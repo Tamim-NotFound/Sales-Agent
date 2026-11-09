@@ -1,8 +1,3 @@
-"""Cut the store policies and the products into chunks, embed them, store them.
-
-Safe to run more than once: it replaces every chunk.
-"""
-
 import asyncio
 import logging
 
